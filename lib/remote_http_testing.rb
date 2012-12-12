@@ -72,7 +72,7 @@ module RemoteHttpTesting
 
   # Used by perform_request. This can be overridden by integration tests to append things to the request,
   # like adding a login cookie.
-  def create_request(url, http_method, params = {}, request_body = nil)
+  def create_request(url, http_method, params = {}, request_body = nil, options = nil)
     uri = URI.parse(url)
     RemoteHttpTesting::populate_uri_with_querystring(uri, params)
     request_class = case http_method
@@ -82,7 +82,7 @@ module RemoteHttpTesting
       when :put then Net::HTTP::Put
       when :patch then Net::HTTP::Patch
     end
-    request = request_class.new(uri.request_uri)
+    request = request_class.new(uri.request_uri, options)
     request.body = request_body if request_body
     headers_for_request.each { |key, value| request.add_field(key, value) } if headers_for_request
     request
